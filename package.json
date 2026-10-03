@@ -1,0 +1,20 @@
+{
+  "name": "reno-studio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "סטודיו בית ההורים: הדמיית תלת-ממד ותקציב לשיפוץ קומת הקרקע",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "0.168.0",
+    "three-gpu-pathtracer": "0.0.23",
+    "three-mesh-bvh": "0.7.8"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FAFAF7">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>סטודיו בית ההורים</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<style>
+/* Layout: a design studio. The model fills the stage; a collapsible spec column (bottom sheet on phones) holds editing, products and the budget. */
+:root{
+  --bg:#E9EBE6; --surface:#FAFAF7; --sunk:#F0F1EC; --fg:#1C2220; --muted:#59635D; --line:#D3D8D1; --line2:#B8C0B8;
+  --accent:#2B5784; --on-accent:#FAFAF7; --accent-soft:#DCE6F1; --scene:#E3E6E1; --overlay:rgba(250,250,247,.93); --shadow:0 -6px 24px rgba(20,30,25,.14);
+  --good:#2F6B45; --warn:#9A5B12; --bad:#A3362B;
+  --display:"Frank Ruhl Libre","David",Georgia,serif; --body:"IBM Plex Sans Hebrew","Arial Hebrew",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111513; --surface:#191E1B; --sunk:#141816; --fg:#E4E8E4; --muted:#9CA59F; --line:#2C3430; --line2:#3D4742;
+  --accent:#8DB2DE; --on-accent:#111513; --accent-soft:#1F2D3B; --scene:#1B211E; --overlay:rgba(25,30,27,.94); --shadow:0 -6px 24px rgba(0,0,0,.5);
+  --good:#86C79C; --warn:#E2AE6A; --bad:#EE9488; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#111513; --surface:#191E1B; --sunk:#141816; --fg:#E4E8E4; --muted:#9CA59F; --line:#2C3430; --line2:#3D4742;
+  --accent:#8DB2DE; --on-accent:#111513; --accent-soft:#1F2D3B; --scene:#1B211E; --overlay:rgba(25,30,27,.94); --shadow:0 -6px 24px rgba(0,0,0,.5);
+  --good:#86C79C; --warn:#E2AE6A; --bad:#EE9488; color-scheme:dark;}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.5;overflow:hidden}
+#app{height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr)}
+header.top{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--line);min-width:0}
+.brand{display:grid;min-width:0;flex:1}
+.brand b{font-family:var(--display);font-size:20px;line-height:1.1;font-weight:700;white-space:nowrap}
+.brand span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{font:inherit;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;padding:7px 10px;cursor:pointer;white-space:nowrap;min-height:36px}
+.ib:hover{border-color:var(--line2)}
+.ib.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+#modeSeg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+#modeSeg button{font:inherit;border:0;background:var(--surface);color:var(--muted);padding:7px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:34px}
+#modeSeg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+#budgetPill{display:grid;line-height:1.1;text-align:start;padding:4px 10px}
+#budgetPill span{font-size:11px;color:var(--muted)}
+#budgetPill b{font-family:var(--display);font-size:17px;font-variant-numeric:tabular-nums}
+.neg{color:var(--bad)}
+body[data-mode="view"] .editOnly{display:none}
+.stage{position:relative;display:grid;grid-template-columns:400px minmax(0,1fr);min-height:0}
+body[data-panel="closed"] .stage{grid-template-columns:0 minmax(0,1fr)}
+body[data-panel="closed"] .panel{visibility:hidden}
+.panel{background:var(--surface);border-inline-end:1px solid var(--line);display:grid;grid-template-rows:auto auto minmax(0,1fr);min-height:0;min-width:0;overflow:hidden;z-index:4}
+#sheetHandle{display:none}
+#tabs{display:flex;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+#tabs button{flex:1;font:inherit;font-size:14px;padding:11px 6px;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);cursor:pointer;white-space:nowrap}
+#tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+#panelBody{overflow-y:auto;overscroll-behavior:contain;padding:14px 16px 28px;display:grid;gap:12px;align-content:start;min-width:0}
+.viewport{position:relative;overflow:hidden;background:var(--scene);min-width:0}
+.viewport canvas{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}
+body[data-mode="edit"] .viewport canvas{cursor:default}
+#views{position:absolute;top:10px;inset-inline:10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;z-index:2}
+#views button,.tools button{font:inherit;font-size:13px;padding:6px 11px;border:1px solid var(--line);background:var(--overlay);color:var(--fg);border-radius:999px;cursor:pointer;white-space:nowrap}
+#views button[aria-pressed="true"],.tools button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tools{position:absolute;top:50px;inset-inline-end:10px;display:flex;gap:6px;z-index:2}
+.modeTag{position:absolute;bottom:12px;inset-inline-start:12px;font-size:12px;padding:4px 10px;border-radius:999px;background:var(--overlay);border:1px solid var(--line);color:var(--muted);z-index:2}
+body[data-mode="edit"] .modeTag{color:var(--accent);border-color:var(--accent)}
+.lbl3d{position:absolute;left:0;top:0;font-size:12px;font-weight:500;padding:2px 8px;border-radius:999px;background:var(--overlay);border:1px solid var(--line);color:var(--fg);white-space:nowrap;pointer-events:none;will-change:transform}
+#toast{position:absolute;top:52px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:7px 14px;border-radius:999px;font-size:13px;z-index:6;max-width:90%;text-align:center}
+.nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+#photo{position:absolute;inset:0;background:var(--overlay);display:grid;place-items:center;padding:16px;z-index:8;overflow:auto}
+#photo.running{background:transparent;place-items:end center}
+#photo.running .pbox{max-width:420px}
+.pbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px;width:100%;max-width:640px;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+.pbox h2{font-family:var(--display);margin:0;font-size:22px}
+.bar{height:6px;background:var(--sunk);border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--accent);transition:width .2s}
+.shot{width:100%;border-radius:6px;border:1px solid var(--line)}
+@media (max-width:900px){
+  header.top{gap:6px;padding:6px 8px}
+  .brand b{font-size:17px}.brand span{display:none}
+  .hideM{display:none!important}
+  .stage{display:block}
+  .viewport{position:absolute;inset:0}
+  .panel{position:absolute;inset-inline:0;bottom:0;height:68px;border-inline-end:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:var(--shadow);grid-template-rows:auto auto minmax(0,1fr);transition:height .22s ease}
+  .panel.dragging{transition:none}
+  #sheetHandle{display:flex;justify-content:center;padding:8px 0 2px;cursor:grab;touch-action:none}
+  #sheetHandle span{width:44px;height:5px;border-radius:9px;background:var(--line2)}
+  body[data-sheet="min"] #panelBody{visibility:hidden}
+  .modeTag{bottom:80px}
+  body[data-sheet="mid"] .modeTag,body[data-sheet="max"] .modeTag{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* panel content */
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.ph h2,.empty h2{font-family:var(--display);font-size:21px;margin:0;line-height:1.2;font-weight:700;text-wrap:balance}
+.eyebrow{font-size:12px;color:var(--muted);margin:0}
+.x{display:grid;place-items:center;border:1px solid var(--line);background:none;color:var(--muted);border-radius:6px;width:32px;height:32px;cursor:pointer;flex:none}
+h3{font-family:var(--display);font-size:17px;margin:8px 0 0;font-weight:700}
+.fld{display:grid;gap:6px;min-width:0}
+.fl{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.hint{font-size:12px;color:var(--muted);margin:0}
+.note{font-size:13px;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:0}
+.note.row{justify-content:space-between}
+.ok{font-size:13px;color:var(--good);margin:0}.err{font-size:13px;color:var(--bad);margin:0}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button,.btns button,.addlist button,.quick button,.row button,#panelBody > button,.note button,.ghost{font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ghost{padding:5px 9px;font-size:12.5px}
+button.primary{background:var(--accent)!important;border-color:var(--accent)!important;color:var(--on-accent)!important}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.tiers button{font:inherit;display:grid;padding:6px 8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;cursor:pointer;text-align:start}
+.tiers span{font-size:12px;color:var(--muted)}.tiers b{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+.tiers button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.sw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{width:30px;height:30px;border-radius:6px;border:1px solid var(--line2);cursor:pointer;padding:0}
+.chip.on{outline:2px solid var(--accent);outline-offset:2px}
+.cpick{width:30px;height:30px;border-radius:6px;border:1px dashed var(--line2);overflow:hidden;display:grid;place-items:center;cursor:pointer}
+.cpick input{width:44px;height:44px;border:0;padding:0;cursor:pointer}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row.sp{justify-content:space-between}
+.row label{display:grid;gap:2px;font-size:12px;color:var(--muted);flex:1;min-width:110px}
+.row.dimrow label{min-width:70px}.btns .deg{display:inline-flex;align-items:center;gap:3px;font-size:13px;color:var(--muted)}.btns .deg input{width:68px}
+.row .fld{flex:1;min-width:120px}
+input[type=number],input[type=text],input[type=url],select{font:inherit;font-size:16px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);width:100%;min-width:0}
+@media (min-width:901px){input[type=number],input[type=text],input[type=url],select{font-size:14px}}
+.row input[type=text]{flex:1}
+input[type=range]{flex:1;accent-color:var(--accent)}
+input[type=file]{font:inherit;font-size:13px;max-width:100%}
+output{font-size:13px;font-variant-numeric:tabular-nums;min-width:86px}
+.btns{display:flex;flex-wrap:wrap;gap:6px}.btns.end{border-top:1px solid var(--line);padding-top:10px}
+.danger{color:var(--bad)!important}
+.tog{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}.tog input{accent-color:var(--accent);width:17px;height:17px}
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.quick button{text-align:start}
+.empty{display:grid;gap:10px}.empty p{margin:0}
+.howto{margin:0;padding-inline-start:18px;display:grid;gap:6px;font-size:13.5px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.card{font:inherit;display:grid;gap:2px;text-align:start;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);cursor:pointer}
+.card span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.card.on{border-color:var(--accent);background:var(--accent-soft)}
+.appl{display:grid;gap:6px;padding-block:8px;border-bottom:1px solid var(--line)}
+.appl .seg button{font-size:12px;padding:4px 8px;font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td{padding:5px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:600;border-bottom:0}tr.out td{opacity:.5}
+.addlist{display:grid;gap:4px}.addlist button{display:flex;justify-content:space-between;gap:10px;text-align:start}
+.addlist b{font-weight:400;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}.addlist b.warn{color:var(--warn)}
+.bsum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bsum div{background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:grid}
+.bsum b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.tagsum{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+details.grp{border:1px solid var(--line);border-radius:6px}
+details.grp summary{display:flex;justify-content:space-between;padding:9px 10px;cursor:pointer;font-weight:500}
+details.grp summary b{font-variant-numeric:tabular-nums;font-weight:600}
+.bl td{padding:6px 10px}
+.lnk{font:inherit;background:none;border:0;padding:0;color:var(--fg);text-align:start;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+.lctl{display:flex;gap:4px;margin-top:4px}.lctl select{font-size:12px;padding:2px 4px;width:auto}
+.badge{display:inline-block;font-size:11px;padding:1px 6px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-inline-start:6px}
+.dims{display:grid;gap:6px}.dims label{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center;font-size:13px}
+.dims em{display:block;font-style:normal;font-size:11.5px;color:var(--muted)}
+.vlist{display:grid;gap:6px}
+.vrow{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.vrow > div:first-child{display:grid;min-width:0}.vrow span{font-size:12px;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.lnkbtn{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:5px 9px}
+.lnkbtn:hover{border-color:var(--accent)}
+.pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pcard{font:inherit;display:grid;gap:4px;text-align:start;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);cursor:pointer;min-width:0}
+.pcard.on{border-color:var(--accent);background:var(--accent-soft)}
+.pcard .pn{font-size:12.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard .pp{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pt{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:5px;background:var(--sunk);display:grid;place-items:center;color:rgba(0,0,0,.35)}
+.prow .pt{width:72px;height:72px;aspect-ratio:auto;flex:none}
+.prow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);min-width:0}
+.pi{display:grid;gap:4px;min-width:0}.pi b{font-weight:500;font-size:13.5px;line-height:1.3}.pi > span{font-size:12px;color:var(--muted)}
+.plist{display:grid}
+.prodHero{display:flex;gap:12px;align-items:flex-start}
+.hero{width:120px;height:96px;object-fit:cover;border-radius:6px;flex:none;background:var(--sunk);display:grid;place-items:center;color:rgba(0,0,0,.35)}
+.prodHero > div{display:grid;gap:6px;justify-items:start}.prodHero b{font-family:var(--display);font-size:20px}
+.palette{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.palette div{display:grid;gap:3px;justify-items:center}.palette span{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid var(--line2)}.palette em{font-style:normal;font-size:11px;color:var(--muted)}
+.board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bcard{border:1px solid var(--line);border-radius:8px;overflow:hidden;display:grid;min-width:0;background:var(--surface)}
+.bimg{width:100%;aspect-ratio:1;object-fit:cover;background:var(--sunk);display:grid;place-items:center;color:rgba(0,0,0,.35)}
+.bt{padding:8px;display:grid;gap:4px}.bt b{font-weight:500;font-size:12.5px;line-height:1.3}.bt > span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pform{display:grid;gap:10px}
+</style>
+</head>
+<body>
+<div id="app" dir="rtl">
+  <header class="top">
+    <button type="button" class="ib" id="panelBtn" aria-label="פתיחה וסגירה של הלוח"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M15 5v14"/></svg></button>
+    <div class="brand"><b>סטודיו בית ההורים</b><span>קומת הקרקע · <span id="designName"></span></span></div>
+    <div id="modeSeg" role="group" aria-label="מצב">
+      <button type="button" data-v="view" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span class="hideM">צפייה</span></button>
+      <button type="button" data-v="edit" aria-pressed="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><span class="hideM">עריכה</span></button>
+    </div>
+    <button type="button" class="ib editOnly hideM" id="undoBtn" aria-label="ביטול">↶</button>
+    <button type="button" class="ib editOnly hideM" id="redoBtn" aria-label="חזרה">↷</button>
+    <button type="button" class="ib primary" id="photoBtn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="hideM">צילום ריאליסטי</span></button>
+    <button type="button" class="ib" id="shareBtn" aria-label="שיתוף העיצוב בקישור"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></svg><span class="hideM">שיתוף</span></button>
+    <button type="button" class="ib" id="budgetPill" aria-label="תקציב"></button>
+  </header>
+  <main class="stage">
+    <aside class="panel" id="panel">
+      <div id="sheetHandle" aria-hidden="true"><span></span></div>
+      <nav id="tabs" role="tablist" aria-label="לשוניות">
+        <button type="button" role="tab" data-v="edit" aria-selected="true">פריט</button>
+        <button type="button" role="tab" data-v="add" aria-selected="false">הוספה</button>
+        <button type="button" role="tab" data-v="products" aria-selected="false">מוצרים</button>
+        <button type="button" role="tab" data-v="budget" aria-selected="false">תקציב</button>
+        <button type="button" role="tab" data-v="more" aria-selected="false">עוד</button>
+      </nav>
+      <div id="panelBody"></div>
+    </aside>
+    <section class="viewport" id="viewer">
+      <canvas id="cv" aria-label="מודל תלת-ממד של קומת הקרקע"></canvas>
+      <div id="labels"></div>
+      <div id="views" role="group" aria-label="נקודת מבט"></div>
+      <div class="tools"><button type="button" id="cutBtn" aria-pressed="false">חתך</button><button type="button" id="lblBtn" aria-pressed="true">תוויות</button></div>
+      <div class="modeTag" aria-hidden="true"><span class="vt">צפייה: גרירה מסובבת, שתי אצבעות מקרבות</span></div>
+      <div id="toast" role="status" hidden></div>
+      <div id="photo" hidden><div class="pbox"></div></div>
+    </section>
+  </main>
+  <input type="file" id="hiddenFile" accept="image/*" hidden>
+  <input type="file" id="importFile" accept=".json,application/json" hidden>
+</div>
+<script type="module" src="/src/app.js"></script>
+</body>
+</html>
